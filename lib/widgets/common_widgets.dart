@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import '../data/portfolio_data.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-/// Opens a URL (http/https/mailto/tel) in the appropriate handler.
 Future<void> launchUrlSafely(String url) async {
   final uri = Uri.parse(url);
   try {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } catch (_) {
-    // Ignore — nothing useful we can do if the platform has no handler.
-  }
+    if (url.startsWith('mailto:')) {
+      // Gmail web directly open ஆகும்
+      final email = url.replaceFirst('mailto:', '');
+      final gmailUrl = Uri.parse('https://mail.google.com/mail/?view=cm&to=$email');
+      await launchUrl(gmailUrl, mode: LaunchMode.externalApplication);
+    } else {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  } catch (_) {}
 }
 
-/// Primary call-to-action button with a gradient fill (or outline variant)
-/// and a soft hover-scale / glow effect on web & desktop.
 class GradientButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
@@ -92,8 +95,6 @@ class _GradientButtonState extends State<GradientButton> {
   }
 }
 
-/// A small pill "tag" + big title + optional subtitle, used at the top of
-/// every screen for a consistent look.
 class SectionHeader extends StatelessWidget {
   final String tag;
   final String title;
@@ -111,7 +112,8 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment:
+          center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -151,19 +153,19 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-/// Row of circular social icon buttons (GitHub / LinkedIn / Twitter / Email).
+// ── Social Icons Row ── GitHub, LinkedIn, Instagram, Email
 class SocialIconsRow extends StatelessWidget {
   final double size;
   const SocialIconsRow({super.key, this.size = 42});
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      (Icons.code, PortfolioData.githubUrl),
-      (Icons.business_center, PortfolioData.linkedinUrl),
-      (Icons.alternate_email, PortfolioData.twitterUrl),
-      (Icons.email, 'mailto:${PortfolioData.email}'),
-    ];
+    final List<(IconData, String)> items = [
+  (FontAwesomeIcons.github, PortfolioData.githubUrl),
+  (FontAwesomeIcons.linkedin, PortfolioData.linkedinUrl),
+  (FontAwesomeIcons.instagram, PortfolioData.instagramUrl),
+  (Icons.email, 'mailto:${PortfolioData.email}'),
+];
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -204,7 +206,9 @@ class _SocialIconState extends State<_SocialIcon> {
           height: widget.size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _hovering ? AppColors.primary.withOpacity(0.18) : AppColors.surface,
+            color: _hovering
+                ? AppColors.primary.withOpacity(0.18)
+                : AppColors.surface,
             border: Border.all(
               color: _hovering ? AppColors.primary : AppColors.border,
             ),
@@ -220,7 +224,6 @@ class _SocialIconState extends State<_SocialIcon> {
   }
 }
 
-/// Footer shown at the bottom of every screen.
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
 
@@ -236,7 +239,7 @@ class AppFooter extends StatelessWidget {
           const SocialIconsRow(size: 38),
           const SizedBox(height: 18),
           Text(
-            '\u00a9 ${DateTime.now().year} ${PortfolioData.name} \u2014 Built with Flutter',
+            '© ${DateTime.now().year} ${PortfolioData.name} — Built with Flutter',
             style: AppTextStyles.body(size: 13, color: AppColors.textMuted),
             textAlign: TextAlign.center,
           ),
@@ -246,7 +249,6 @@ class AppFooter extends StatelessWidget {
   }
 }
 
-/// A code-only abstract avatar illustration (no image assets required).
 class AvatarIllustration extends StatelessWidget {
   final double size;
   const AvatarIllustration({super.key, this.size = 260});

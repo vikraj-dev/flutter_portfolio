@@ -19,9 +19,17 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _index = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final ScrollController _scrollController = ScrollController();
 
   void _select(int i) {
+    if (_index == i) return; // same screen tap பண்ணா skip
     setState(() => _index = i);
+    // புது screen போகும்போது top-க்கு scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    });
   }
 
   Widget _buildScreen(int index) {
@@ -42,13 +50,21 @@ class _MainShellState extends State<MainShell> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.background,
-      drawer: isMobile ? NavDrawer(currentIndex: _index, onSelect: _select) : null,
+      drawer: isMobile
+          ? NavDrawer(currentIndex: _index, onSelect: _select)
+          : null,
       body: Column(
         children: [
           TopNavBar(
@@ -58,20 +74,36 @@ class _MainShellState extends State<MainShell> {
           ),
           Expanded(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 350),
+              duration: const Duration(milliseconds: 400),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
               transitionBuilder: (child, animation) {
-                final slide = Tween<Offset>(
-                  begin: const Offset(0, 0.03),
+                final fadeAnim = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                );
+                final slideAnim = Tween<Offset>(
+                  begin: const Offset(0, 0.015), // subtle slide
                   end: Offset.zero,
-                ).animate(animation);
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ));
                 return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(position: slide, child: child),
+                  opacity: fadeAnim,
+                  child: SlideTransition(
+                    position: slideAnim,
+                    child: RepaintBoundary(child: child), // lag reduce
+                  ),
                 );
               },
               child: SingleChildScrollView(
                 key: ValueKey(_index),
-                child: _buildScreen(_index),
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(), // smooth scroll
+                child: RepaintBoundary(
+                  child: _buildScreen(_index),
+                ),
               ),
             ),
           ),

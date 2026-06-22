@@ -57,7 +57,7 @@ class ExperienceItem {
 
 class PortfolioData {
   // ---- Basic info — EDIT THESE ----
-  static const String name = 'Your Name';
+  static const String name = 'Vikraj.A';
   static const String shortBio =
       "I'm a passionate Flutter Developer who loves turning ideas into smooth, "
       'pixel-perfect mobile and web experiences.';
@@ -74,20 +74,20 @@ class PortfolioData {
     'Cross-Platform Specialist',
   ];
 
-  static const String email = 'your.email@example.com';
-  static const String phone = '+91 90000 00000';
+  static const String email = 'vikrajarjun@gmail.com';
+  static const String phone = '+91 63801 77563';
   static const String location = 'Coimbatore, Tamil Nadu, India';
 
-  static const String githubUrl = 'https://github.com/yourusername';
-  static const String linkedinUrl = 'https://linkedin.com/in/yourusername';
-  static const String twitterUrl = 'https://twitter.com/yourusername';
+  static const String githubUrl = 'https://github.com/vikraj-dev';
+  static const String linkedinUrl = 'https://www.linkedin.com/in/vikraj-arjun/';
+  static const String instagramUrl = 'https://instagram.com/itsvicky.dev'; 
   static const String resumeUrl = 'https://github.com/yourusername';
 
   // ---- Stats shown on the Home screen ----
-  static const int yearsExperience = 3;
-  static const int projectsCompleted = 25;
-  static const int happyClients = 15;
-  static const int appsPublished = 10;
+  static const int yearsExperience = 2;
+  static const int projectsCompleted = 6;
+  static const int happyClients = 3;
+  static const int appsPublished = 2;
 
   // ---- Skills ----
   static const List<SkillGroup> skillGroups = [

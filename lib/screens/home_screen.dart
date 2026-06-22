@@ -36,7 +36,9 @@ class HomeScreen extends StatelessWidget {
                             FadeSlideIn(
                               delay: const Duration(milliseconds: 300),
                               child: Center(
-                                child: Floating3D(child: AvatarIllustration(size: 220)),
+                                child: Floating3D(
+                                  child: _ProfilePhoto(size: 220),
+                                ),
                               ),
                             ),
                           ],
@@ -51,7 +53,9 @@ class HomeScreen extends StatelessWidget {
                               child: FadeSlideIn(
                                 delay: const Duration(milliseconds: 250),
                                 child: Center(
-                                  child: Floating3D(child: AvatarIllustration(size: 300)),
+                                  child: Floating3D(
+                                    child: _ProfilePhoto(size: 300),
+                                  ),
                                 ),
                               ),
                             ),
@@ -204,6 +208,52 @@ class HomeScreen extends StatelessWidget {
           child: const SocialIconsRow(),
         ),
       ],
+    );
+  }
+}
+
+// ── Profile Photo Widget ──
+class _ProfilePhoto extends StatelessWidget {
+  final double size;
+  const _ProfilePhoto({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: AppColors.primaryGradient,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.4),
+            blurRadius: 50,
+            spreadRadius: 8,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: ClipOval(
+          child: Image.asset(
+            'assets/crop.JPG',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                ),
+                child: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: size * 0.4,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }
